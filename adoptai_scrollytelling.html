@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>When Does GenAI Adoption Become a Collective Workplace Norm?</title>
+<style>
+  :root{
+    --bg:#f7f9fc; --ink:#17212b; --muted:#536879; --faint:#7a8ea0;
+    --panel:#ffffff; --panel2:#f1f5f9; --border:#d8e2ea;
+    --amber:#b45309; --cyan:#0f766e; --green:#198754; --green2:#0f6b43;
+    --yellow:#d97706; --orange:#ea580c; --red:#dc2626; --blue:#2563eb;
+    --gray:#94a3b8; --grid:#e2e8f0;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;scroll-behavior:smooth;}
+  body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;
+    background:
+      radial-gradient(circle at 22% 8%, rgba(15,118,110,.11), transparent 36%),
+      radial-gradient(circle at 82% 18%, rgba(180,83,9,.09), transparent 34%),
+      linear-gradient(180deg,#f7f9fc 0%,#eef4f8 100%);}
+  .eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.22em;
+    text-transform:uppercase;font-size:11px;color:var(--amber);}
+  .wrap{max-width:1200px;margin:0 auto;}
+  a{color:var(--blue);text-decoration:none;border-bottom:1px solid rgba(37,99,235,.25)}
+  a:hover{border-bottom-color:var(--blue)}
+  .hero{min-height:94vh;display:flex;flex-direction:column;justify-content:center;padding:0 7vw;position:relative;overflow:hidden;}
+  .hero:after{content:"";position:absolute;right:-9vw;bottom:5vh;width:46vw;max-width:560px;aspect-ratio:1;border-radius:28px;
+    background:linear-gradient(135deg,rgba(15,118,110,.09),rgba(180,83,9,.05));border:1px solid rgba(148,163,184,.35);
+    transform:rotate(-7deg);filter:blur(.2px);z-index:-1;}
+  .hero h1{font-size:clamp(2.05rem,6vw,4.6rem);line-height:1.02;margin:.45em 0 .28em;
+    font-weight:820;letter-spacing:-.035em;max-width:17ch;}
+  .hero p{font-size:clamp(1rem,2.2vw,1.35rem);color:var(--muted);max-width:50ch;line-height:1.55;}
+  .hero strong{color:var(--ink)}
+  .byline{font-size:clamp(.96rem,1.5vw,1.12rem)!important;letter-spacing:.01em;text-transform:none;color:var(--cyan)!important;margin:.6em 0 0!important;opacity:.98;font-weight:650;max-width:58ch;}
+  .scrollcue{position:absolute;bottom:4vh;left:7vw;color:var(--faint);font-size:.8rem;
+    font-family:ui-monospace,monospace;letter-spacing:.1em;animation:bob 2s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+
+  .anchor{max-width:1060px;margin:0 auto;padding:9vh 7vw 7vh;border-top:1px solid var(--border);}
+  .anchor h2{font-size:clamp(1.6rem,4vw,2.7rem);font-weight:820;letter-spacing:-.03em;margin:.3em 0 .6em;}
+  .lede{color:#425466;font-size:1.06rem;line-height:1.68;max-width:66ch;margin-bottom:2em;}
+  .anc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .anc-card,.anc-wide{background:rgba(255,255,255,.88);border:1px solid var(--border);border-radius:16px;padding:22px 24px;box-shadow:0 18px 45px -34px rgba(15,23,42,.32);}
+  .anc-wide{margin-top:16px;}
+  .labeltop{font-family:ui-monospace,monospace;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--amber);margin-bottom:.65em;}
+  .anc-card h3,.anc-wide h3{font-size:1.08rem;font-weight:770;margin:.2em 0 .6em;letter-spacing:-.015em;}
+  .anc-card p,.anc-wide p{color:#425466;font-size:.94rem;line-height:1.64;margin:.42em 0;}
+  code,.code{font-family:ui-monospace,monospace;background:#eef6f8;color:#0f766e;padding:2px 7px;border-radius:6px;font-size:.9em;border:1px solid #cfe1e5;}
+  .theory-list{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px;}
+  .mini{background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:14px;min-height:116px;}
+  .mini b{display:block;color:var(--ink);font-size:.92rem;margin-bottom:5px;}
+  .mini span{color:var(--muted);font-size:.82rem;line-height:1.45;display:block;}
+  .dist{margin-top:1.2em;background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:14px;}
+  .dist svg{width:100%;height:auto;display:block;}
+  .dist .caption{font-size:.78rem;color:var(--muted);line-height:1.45;margin-top:8px;}
+
+  .legend-strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:1.4em;}
+  .chip{display:inline-flex;align-items:center;gap:7px;background:#ffffff;border:1px solid var(--border);border-radius:22px;padding:6px 10px;color:#425466;font-size:.82rem;}
+  .sw{width:11px;height:11px;border-radius:50%;display:inline-block;}
+  .sw.g{background:var(--green)}.sw.y{background:var(--yellow)}.sw.r{background:var(--red)}.sw.n{background:var(--gray)}.sw.b{background:var(--blue)}
+
+  .scrolly{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:0;max-width:1200px;margin:0 auto;border-top:1px solid var(--border);}
+  .graphic{position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center;padding:2vh 1vw;}
+  .stage{position:relative;width:100%;max-width:570px;}
+  canvas{width:100%;height:auto;display:block;border-radius:16px;border:1px solid var(--border);background:#f8fafc;box-shadow:0 22px 55px -34px rgba(15,23,42,.36);}
+  .badge{position:absolute;top:14px;left:14px;display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.86);border:1px solid var(--border);border-radius:12px;padding:8px 12px;backdrop-filter:blur(8px);min-width:216px;transition:border-color .4s;box-shadow:0 12px 24px -20px rgba(15,23,42,.3);}
+  .dot{width:13px;height:13px;border-radius:50%;background:var(--faint);transition:all .5s;}
+  .badge .lvl{font-weight:770;font-size:.92rem;line-height:1;}
+  .badge .sub{font-size:.64rem;color:var(--muted);font-family:ui-monospace,monospace;letter-spacing:.04em;margin-top:3px;text-transform:uppercase;}
+  .readout{position:absolute;right:14px;bottom:14px;background:rgba(255,255,255,.86);border:1px solid var(--border);border-radius:12px;padding:8px 12px;text-align:right;backdrop-filter:blur(8px);font-family:ui-monospace,monospace;min-width:150px;box-shadow:0 12px 24px -20px rgba(15,23,42,.3);}
+  .readout .big{font-size:1.42rem;font-weight:830;line-height:1;}
+  .readout .cap{font-size:.58rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-top:3px;}
+  .sim-controls{position:absolute;left:14px;bottom:14px;display:flex;gap:6px;}
+  .sim-controls button{background:rgba(255,255,255,.92);color:#17212b;border:1px solid var(--border);border-radius:9px;padding:7px 10px;font-size:.72rem;font-weight:700;letter-spacing:.04em;cursor:pointer;box-shadow:0 10px 18px -18px rgba(15,23,42,.25);}
+  .sim-controls button:hover{border-color:#94a3b8;}
+  .steps{padding:0 0 30vh;}
+  .step{min-height:88vh;display:flex;flex-direction:column;justify-content:center;padding:5vh 8% 5vh 9%;opacity:.30;transition:opacity .35s;}
+  .step.active{opacity:1;}
+  .step h2{font-size:clamp(1.4rem,3vw,2.15rem);margin:.12em 0 .5em;line-height:1.12;font-weight:790;letter-spacing:-.02em;}
+  .step p{font-size:clamp(1rem,1.6vw,1.16rem);line-height:1.64;color:#425466;margin:.55em 0;max-width:44ch;}
+  .step .num{font-family:ui-monospace,monospace;color:var(--amber);font-size:.8rem;letter-spacing:.2em;}
+  .pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:.78rem;font-weight:760;vertical-align:middle;margin:0 2px;white-space:nowrap;}
+  .pill.g{background:rgba(25,135,84,.12);color:var(--green)}
+  .pill.y{background:rgba(217,119,6,.13);color:var(--yellow)}
+  .pill.o{background:rgba(234,88,12,.13);color:var(--orange)}
+  .pill.r{background:rgba(220,38,38,.12);color:var(--red)}
+  .pill.b{background:rgba(37,99,235,.11);color:var(--blue)}
+  .chartbox{margin-top:1.3em;background:var(--panel);border:1px solid var(--border);border-radius:13px;padding:16px;max-width:440px;box-shadow:0 16px 35px -32px rgba(15,23,42,.32);}
+  .chartbox .ttl{font-family:ui-monospace,monospace;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+  .chartbox svg{width:100%;height:auto;display:block;}
+
+  .summary{padding:9vh 7vw 3vh;max-width:1040px;margin:0 auto;border-top:1px solid var(--border);}
+  .summary h2{font-size:clamp(1.6rem,4vw,2.65rem);font-weight:820;letter-spacing:-.03em;margin:.3em 0 .25em;}
+  .qa{display:flex;flex-direction:column;gap:16px;margin-top:2.5em;}
+  .qcard{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:22px 26px;box-shadow:0 16px 36px -34px rgba(15,23,42,.32);}
+  .qcard .qn{font-family:ui-monospace,monospace;color:var(--amber);font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;}
+  .qcard h3{font-size:1.16rem;margin:.35em 0 .55em;font-weight:780;letter-spacing:-.01em;}
+  .qcard p{color:#425466;line-height:1.62;font-size:1rem;margin:.45em 0;}
+  .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px;}
+  .metric{background:#ffffff;border:1px solid var(--border);border-radius:12px;padding:16px;}
+  .metric b{font-size:.93rem}.metric span{display:block;color:var(--muted);font-size:.82rem;line-height:1.45;margin-top:5px;}
+  .outro{min-height:88vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 7vw;}
+  .outro h2{font-size:clamp(1.85rem,5vw,3.45rem);font-weight:850;max-width:19ch;line-height:1.08;letter-spacing:-.035em;}
+  .outro p{color:var(--muted);max-width:56ch;font-size:1.06rem;line-height:1.65;margin-top:1em;}
+  .caveat{margin-top:2.4em;font-size:.82rem;color:var(--faint);max-width:64ch;line-height:1.55;}
+  footer{padding:6vh 7vw 8vh;color:var(--faint);font-size:.78rem;line-height:1.7;border-top:1px solid var(--border);}
+  footer b{color:#17212b;font-weight:650;}
+
+  @media(max-width:920px){
+    .anc-grid,.theory-list,.metrics{grid-template-columns:1fr;}
+    .scrolly{display:block;}
+    .graphic{position:sticky;top:0;height:58vh;padding:10px;z-index:5;background:linear-gradient(180deg,var(--bg) 82%,transparent);}
+    .stage{max-width:430px;}
+    .steps{padding:0 0 18vh;}
+    .step{min-height:auto;padding:8vh 7% 8vh;}
+    .step p{max-width:none;}
+    .badge{min-width:190px}.sim-controls{display:none;}
+  }
+  @media(max-width:520px){
+    .hero{padding:0 6vw}.anchor,.summary,footer{padding-left:6vw;padding-right:6vw;}
+    .readout{right:10px;bottom:10px;min-width:130px}.badge{left:10px;top:10px;}
+  }
+  @media(prefers-reduced-motion:reduce){.scrollcue{animation:none}html,body{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="eyebrow">A Workplace Story · GenAI Adoption · Segregation and Threshold Theory</div>
+  <h1>When Does GenAI Adoption Become a Collective Workplace Norm?</h1>
+  <p class="byline">A workplace story of GenAI adoption, simulated through Segregation and Threshold Theory.</p>
+  <p>GenAI adoption does not spread evenly across a workplace. Some employees try it early, some wait for social proof, some avoid it, and some use it quietly when guidance is unclear. This simulation uses <strong>Threshold Theory</strong> to explain cascades and <strong>Segregation Theory</strong> to explain workplace clustering.</p>
+  <div class="scrollcue">↓ scroll</div>
+</section>
+
+<section class="anchor">
+  <div class="eyebrow" style="color:var(--cyan)">Working concepts and key insights · before you scroll</div>
+  <h2>Working concepts behind the workplace pattern.</h2>
+  <p class="lede">This project keeps the academic theory at the center. <strong>AdoptAI</strong> <em>(working concept)</em> is the workplace context used to make <strong>Segregation and Threshold Theory</strong> visible, concrete, and relatable.</p>
+
+  <div class="anc-grid">
+    <div class="anc-card">
+      <div class="labeltop">Concept 01 · Thomas C. Schelling · 1971</div>
+      <h3>Segregation Theory: small preferences can create visible clusters.</h3>
+      <p>In <em>Dynamic Models of Segregation</em>, Thomas C. Schelling showed how local choices can produce large patterns of separation. In this workplace version, employees do not need strong or negative intentions to form groups; similar habits, comfort, and learning networks can gradually create clusters of AI users, cautious users, and non-users.</p>
+      <p><span class="code">Stay if enough nearby coworkers are similar</span></p>
+    </div>
+    <div class="anc-card">
+      <div class="labeltop">Concept 02 · Mark Granovetter · 1978</div>
+      <h3>Threshold Theory: hesitation can become action.</h3>
+      <p>In <em>Threshold Models of Collective Behavior</em>, Mark Granovetter explained how people may join a behavior only after enough others have already joined. In GenAI adoption, one employee may adopt after a few trusted examples, while another may wait until adoption is already common.</p>
+      <p><span class="code">Adopt if nearby AI users ≥ personal threshold</span></p>
+    </div>
+    <div class="anc-card">
+      <div class="labeltop">Concept 03 · cascade</div>
+      <h3>The same starters can produce different outcomes.</h3>
+      <p>One starter can fail. Two starters can trigger a small chain reaction. Enough starters can cross the threshold and produce a full cascade.</p>
+      <p><span class="code">Broken cascade → critical point → full cascade</span></p>
+    </div>
+    <div class="anc-card">
+      <div class="labeltop">Concept 04 · governance</div>
+      <h3>Adoption is not automatically safe adoption.</h3>
+      <p>A workplace can have high AI use but weak visibility. Without clear policy, training, and review, adoption may become hidden rather than guided. The purpose is not to blame employees, but to understand the conditions that shape responsible adoption.</p>
+      <p><span class="code">More adoption ≠ safer adoption</span></p>
+    </div>
+  </div>
+
+  <div class="anc-wide">
+    <div class="labeltop">Working insight</div>
+    <h3>Simple local rules can produce large workplace patterns.</h3>
+    <p>Each employee reads the local environment: coworkers, manager signals, policy clarity, training, and visible success stories. If the signal crosses their threshold, they adopt. If the surrounding behavior feels too different, clustering can appear. The result is not only adoption, but <strong>adoption patterns</strong>.</p>
+    <div class="theory-list">
+      <div class="mini"><b>Agent</b><span>One employee or student in the model.</span></div>
+      <div class="mini"><b>Threshold</b><span>The minimum signal needed before adopting AI.</span></div>
+      <div class="mini"><b>Emergence</b><span>The group pattern that appears without central control.</span></div>
+    </div>
+    <div class="legend-strip">
+      <span class="chip"><span class="sw g"></span>Safe AI adopter</span>
+      <span class="chip"><span class="sw y"></span>Cautious / waiting</span>
+      <span class="chip"><span class="sw n"></span>Non-user</span>
+      <span class="chip"><span class="sw r"></span>Shadow AI user</span>
+      <span class="chip"><span class="sw b"></span>Manager / governance</span>
+    </div>
+    <div class="dist">
+      <svg viewBox="0 0 760 270" role="img" aria-label="Cumulative threshold distribution chart">
+        <rect x="0" y="0" width="760" height="270" rx="10" fill="#f8fafc"/>
+        <line x1="70" y1="218" x2="700" y2="218" stroke="#cbd5e1" stroke-width="2"/>
+        <line x1="70" y1="218" x2="70" y2="34" stroke="#cbd5e1" stroke-width="2"/>
+        <path d="M70 206 C125 203, 160 192, 204 178 C265 160, 296 129, 340 108 C404 78, 482 58, 700 48" fill="none" stroke="#0f766e" stroke-width="4"/>
+        <line x1="70" y1="218" x2="700" y2="34" stroke="#b45309" stroke-width="3" stroke-dasharray="8 8"/>
+        <circle cx="330" cy="113" r="6" fill="#d97706"/>
+        <text x="86" y="50" fill="#64748b" font-size="13" font-family="monospace">cumulative share ready to adopt</text>
+        <text x="455" y="203" fill="#64748b" font-size="13" font-family="monospace">current participation level</text>
+        <text x="386" y="114" fill="#d97706" font-size="13" font-family="monospace">tipping zone</text>
+        <text x="484" y="76" fill="#0f766e" font-size="13" font-family="monospace">threshold distribution</text>
+        <text x="522" y="132" fill="#c2410c" font-size="13" font-family="monospace">participation line</text>
+      </svg>
+      <div class="caption">Layman view: at each participation level, ask “How many more people are now ready to join?” If the ready-to-join curve stays ahead of the line, the cascade continues. If it falls behind, the cascade breaks.</div>
+    </div>
+  </div>
+</section>
+
+<section class="scrolly">
+  <div class="graphic">
+    <div class="stage">
+      <canvas id="sim" width="900" height="900"></canvas>
+      <div class="badge" id="badge"><span class="dot" id="dot"></span><div><div class="lvl" id="lvl">Workplace baseline</div><div class="sub" id="sub">different thresholds</div></div></div>
+      <div class="readout"><div class="big" id="metric">12%</div><div class="cap" id="cap">adoption rate</div></div>
+      <div class="sim-controls"><button id="resetBtn">RESET</button><button id="pauseBtn">PAUSE</button></div>
+    </div>
+  </div>
+  <div class="steps">
+    <article class="step active" data-mode="baseline" data-label="Workplace baseline" data-sub="different thresholds" data-metric="12%" data-cap="adoption rate" data-color="gray">
+      <div class="num">01</div>
+      <h2>The workplace starts with different thresholds.</h2>
+      <p>Everyone may have access to the same technology, but not everyone adopts at the same time. Some employees are curious. Some wait for evidence. Some are cautious because of quality, ethics, privacy, or policy concerns.</p>
+      <p>This is the first academic point: <strong>individual thresholds are uneven.</strong></p>
+    </article>
+
+    <article class="step" data-mode="starters" data-label="First adopters" data-sub="social signal begins" data-metric="18%" data-cap="visible adopters" data-color="green">
+      <div class="num">02</div>
+      <h2>A few employees try GenAI first.</h2>
+      <p>Early adopters create the first visible signal. But a signal is not yet a cascade. If surrounding employees need stronger proof or clearer guidance, adoption remains isolated.</p>
+      <p><span class="pill g">green</span> cells are safe adopters. <span class="pill y">yellow</span> cells are waiting for stronger proof.</p>
+    </article>
+
+    <article class="step" data-mode="threshold" data-label="Threshold rule" data-sub="who joins next?" data-metric="40%" data-cap="example threshold" data-color="yellow">
+      <div class="num">03</div>
+      <h2>Threshold Theory asks: who joins next?</h2>
+      <p>An employee adopts when the local signal reaches their personal threshold. The signal may come from trusted teammates, manager support, training, or repeated successful examples.</p>
+      <p><span class="code">If nearby AI adopters ≥ my threshold, I adopt.</span></p>
+      <div class="chartbox">
+        <div class="ttl">threshold distribution</div>
+        <svg viewBox="0 0 420 180" role="img" aria-label="Threshold distribution">
+          <rect width="420" height="180" rx="9" fill="#f8fafc"/>
+          <g fill="#d97706" opacity=".88">
+            <rect x="48" y="114" width="35" height="30" rx="3"/><rect x="91" y="92" width="35" height="52" rx="3"/>
+            <rect x="134" y="60" width="35" height="84" rx="3"/><rect x="177" y="45" width="35" height="99" rx="3"/>
+            <rect x="220" y="72" width="35" height="72" rx="3"/><rect x="263" y="103" width="35" height="41" rx="3"/>
+            <rect x="306" y="124" width="35" height="20" rx="3"/>
+          </g>
+          <line x1="40" y1="144" x2="370" y2="144" stroke="#cbd5e1"/>
+          <text x="44" y="165" fill="#64748b" font-size="12" font-family="monospace">low threshold</text>
+          <text x="268" y="165" fill="#64748b" font-size="12" font-family="monospace">high threshold</text>
+        </svg>
+      </div>
+    </article>
+
+    <article class="step" data-mode="broken" data-label="Broken cascade" data-sub="below threshold" data-metric="22%" data-cap="final adoption" data-color="yellow">
+      <div class="num">04</div>
+      <h2>Below the threshold, adoption breaks.</h2>
+      <p>A broken cascade happens when adoption starts but cannot continue. The first adopters are not enough to activate the next layer of employees.</p>
+      <p>Workplace meaning: people may try GenAI once, but without training, trust, manager support, or clear policy, the behavior may not become part of daily work.</p>
+    </article>
+
+    <article class="step" data-mode="critical" data-label="Critical point" data-sub="small changes matter" data-metric="51%" data-cap="unstable zone" data-color="orange">
+      <div class="num">05</div>
+      <h2>Near the threshold, small interventions matter most.</h2>
+      <p>At the critical point, the system becomes sensitive. One manager endorsement, one credible use case, one training session, or one clear policy can determine whether adoption spreads or stalls.</p>
+      <p>This is why threshold models are useful: they explain sudden change without assuming everyone changes at once.</p>
+    </article>
+
+    <article class="step" data-mode="cascade" data-label="Full cascade" data-sub="above threshold" data-metric="78%" data-cap="adoption rate" data-color="green">
+      <div class="num">06</div>
+      <h2>Above the threshold, AI use becomes normal.</h2>
+      <p>Once enough people adopt, GenAI becomes self-reinforcing. Employees learn from each other, share workflows, refine prompts, and begin treating AI as part of ordinary work.</p>
+      <p>This is the cascade: <strong>local adoption produces collective behavior.</strong></p>
+    </article>
+
+    <article class="step" data-mode="segregation" data-label="Segregation appears" data-sub="clusters form" data-metric="0.62" data-cap="segregation index" data-color="cyan">
+      <div class="num">07</div>
+      <h2>But adoption does not spread equally.</h2>
+      <p>Schelling’s insight now enters the story. Even mild local preferences can produce visible separation. Confident AI users may cluster together. Cautious employees may remain with cautious peers. Non-users may become isolated from the learning network.</p>
+      <p>Segregation is not only about place. It can also describe <strong>behavioral clustering</strong>.</p>
+    </article>
+
+    <article class="step" data-mode="zones" data-label="Adoption zones" data-sub="visible groups" data-metric="4" data-cap="workplace groups" data-color="blue">
+      <div class="num">08</div>
+      <h2>The workplace separates into adoption zones.</h2>
+      <p>The result is not simply “users versus non-users.” A workplace can develop multiple zones: safe adopters, cautious employees, non-users, and hidden or informal AI users.</p>
+      <p><span class="pill g">safe users</span> <span class="pill y">cautious users</span> <span class="pill">non-users</span> <span class="pill r">shadow users</span></p>
+    </article>
+
+    <article class="step" data-mode="shadow" data-label="Shadow AI risk" data-sub="hidden adoption" data-metric="31%" data-cap="shadow AI" data-color="red">
+      <div class="num">09</div>
+      <h2>High adoption can still be unsafe.</h2>
+      <p>The concern is not only low adoption. A workplace may appear cautious because employees do not openly report their AI use. If policy is unclear, AI adoption may spread informally and remain difficult to see.</p>
+      <p>That is shadow AI: adoption without enough visibility, disclosure, approved tools, or human review.</p>
+    </article>
+
+    <article class="step" data-mode="governed" data-label="Governed cascade" data-sub="safe adoption path" data-metric="64%" data-cap="safe adoption" data-color="green">
+      <div class="num">10</div>
+      <h2>Governance changes the cascade.</h2>
+      <p>Governance does not simply block adoption. It changes the path. Training reduces uncertainty. Clear policy improves visibility. Approved tools and human review move the system toward safer adoption.</p>
+      <p>The goal is not just more adoption. The goal is <strong>visible, responsible, governed, and inclusive adoption.</strong></p>
+    </article>
+  </div>
+</section>
+
+<section class="summary">
+  <div class="eyebrow" style="color:var(--cyan)">Academic synthesis</div>
+  <h2>What the model teaches.</h2>
+  <p class="lede">AdoptAI is a workplace application, but the intellectual center remains Segregation and Threshold Theory.</p>
+  <div class="qa">
+    <div class="qcard">
+      <div class="qn">Question 01</div>
+      <h3>Why can adoption suddenly accelerate?</h3>
+      <p>Because thresholds create tipping behavior. Once enough people join, they activate others whose thresholds are now satisfied. What looked like isolated use becomes a cascade.</p>
+    </div>
+    <div class="qcard">
+      <div class="qn">Question 02</div>
+      <h3>Why can adoption remain uneven?</h3>
+      <p>Because segregation dynamics create clusters. People learn, share, and normalize behavior locally. If teams are disconnected, one group may become AI-powered while another remains cautious or excluded.</p>
+    </div>
+    <div class="qcard">
+      <div class="qn">Question 03</div>
+      <h3>Why does governance matter mathematically?</h3>
+      <p>Governance changes model parameters: it lowers uncertainty, increases visibility, reduces hidden use, and helps convert risky adoption into safer adoption. In the model, governance is not decoration — it changes the trajectory.</p>
+    </div>
+  </div>
+  <div class="metrics">
+    <div class="metric"><b>Adoption rate</b><span>Total share of employees using GenAI.</span></div>
+    <div class="metric"><b>Safe adoption rate</b><span>Share using AI with policy, review, and approved tools.</span></div>
+    <div class="metric"><b>Shadow adoption rate</b><span>Share using AI secretly or outside governance.</span></div>
+    <div class="metric"><b>Cascade size</b><span>Final number of adopters after the threshold process.</span></div>
+    <div class="metric"><b>Segregation index</b><span>How strongly behavior groups cluster together.</span></div>
+    <div class="metric"><b>Time to cascade</b><span>How many rounds before adoption becomes self-sustaining.</span></div>
+  </div>
+</section>
+
+<section class="outro">
+  <div class="eyebrow">Final insight</div>
+  <h2>AI adoption is a social threshold process.</h2>
+  <p>A workplace does not adopt GenAI one employee at a time in a smooth line. It crosses thresholds. Below the threshold, adoption remains isolated. Near the threshold, small interventions matter most. Above the threshold, adoption becomes self-sustaining.</p>
+  <p>But when adoption combines with segregation, the workplace can split into safe users, cautious users, non-users, and shadow users. The deeper goal is not simply adoption. It is safe, visible, responsible, governed, and inclusive adoption.</p>
+  <div class="caveat">This is a conceptual simulation for theory explanation. It is not a predictive HR model. It is designed to make Segregation and Threshold Theory visible through a modern workplace AI adoption context.</div>
+</section>
+
+<footer>
+  <b>Academic basis:</b> Thomas C. Schelling’s <em>Dynamic Models of Segregation</em> (1971), Mark Granovetter’s <em>Threshold Models of Collective Behavior</em> (1978), and an added governance layer for workplace GenAI adoption.<br/>
+  <b>Project identity:</b> AdoptAI · A workplace story of GenAI adoption, simulated through Segregation and Threshold Theory.
+</footer>
+
+<script>
+(function(){
+  const canvas = document.getElementById('sim');
+  const ctx = canvas.getContext('2d');
+  const steps = Array.from(document.querySelectorAll('.step'));
+  const badge = document.getElementById('badge');
+  const dot = document.getElementById('dot');
+  const lvl = document.getElementById('lvl');
+  const sub = document.getElementById('sub');
+  const metric = document.getElementById('metric');
+  const cap = document.getElementById('cap');
+  const resetBtn = document.getElementById('resetBtn');
+  const pauseBtn = document.getElementById('pauseBtn');
+  const W = canvas.width, H = canvas.height;
+  let activeMode = 'baseline';
+  let activeStep = steps[0];
+  let start = performance.now();
+  let paused = false;
+  let pauseAt = 0;
+
+  const palette = {
+    bg:'#f8fafc', grid:'#e2e8f0', ink:'#17212b', muted:'#536879',
+    green:'#198754', greenDark:'#0f6b43', yellow:'#d97706', orange:'#ea580c', red:'#dc2626', blue:'#2563eb', gray:'#94a3b8', cyan:'#0f766e'
+  };
+
+  function rand(seed){
+    let x = Math.sin(seed) * 10000;
+    return x - Math.floor(x);
+  }
+
+  const N = 29;
+  const margin = 85;
+  const cell = (W - margin*2) / N;
+
+  const baseAgents = [];
+  for(let y=0;y<N;y++){
+    for(let x=0;x<N;x++){
+      const r = rand(x*23.1 + y*91.7 + 11);
+      let threshold = 0.18 + rand(x*17 + y*43 + 3) * 0.62;
+      let state = 1;
+      if(r < .13) state = 2;
+      else if(r < .25) state = 0;
+      baseAgents.push({x,y,threshold,state});
+    }
+  }
+
+  function drawBackground(title){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = palette.bg;
+    ctx.fillRect(0,0,W,H);
+    const g = ctx.createRadialGradient(W*.45,H*.34,20,W*.45,H*.34,W*.65);
+    g.addColorStop(0,'rgba(15,118,110,.08)');
+    g.addColorStop(1,'rgba(15,118,110,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0,0,W,H);
+
+    ctx.strokeStyle = 'rgba(203,213,225,.85)';
+    ctx.lineWidth = 1;
+    for(let i=0;i<=N;i++){
+      let p = margin + i*cell;
+      ctx.beginPath(); ctx.moveTo(margin,p); ctx.lineTo(W-margin,p); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(p,margin); ctx.lineTo(p,H-margin); ctx.stroke();
+    }
+
+    ctx.fillStyle = 'rgba(23,33,43,.78)';
+    ctx.font = '700 20px ui-monospace, monospace';
+    ctx.fillText(title, margin, 52);
+    ctx.fillStyle = 'rgba(100,116,139,.75)';
+    ctx.font = '13px ui-monospace, monospace';
+    ctx.fillText('employee grid · local neighborhoods · threshold rules', margin, 74);
+  }
+
+  function colorFor(state){
+    if(state===2) return palette.green;
+    if(state===1) return palette.yellow;
+    if(state===3) return palette.red;
+    if(state===4) return palette.blue;
+    return palette.gray;
+  }
+
+  function drawAgent(x,y,state,alpha=1,scale=1,ring=false){
+    const cx = margin + x*cell + cell/2;
+    const cy = margin + y*cell + cell/2;
+    const rad = Math.max(4.5, cell*.32*scale);
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.beginPath();
+    ctx.arc(cx,cy,rad,0,Math.PI*2);
+    ctx.fillStyle = colorFor(state);
+    ctx.fill();
+    if(state===2){
+      ctx.beginPath(); ctx.arc(cx,cy,rad*.55,0,Math.PI*2); ctx.fillStyle='rgba(15,23,42,.08)'; ctx.fill();
+    }
+    if(ring){
+      ctx.beginPath(); ctx.arc(cx,cy,rad+5,0,Math.PI*2); ctx.strokeStyle='rgba(255,255,255,.8)'; ctx.lineWidth=2; ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawLegend(){
+    const items = [
+      [palette.green,'safe adopter'],[palette.yellow,'waiting'],[palette.gray,'non-user'],[palette.red,'shadow'],[palette.blue,'manager']
+    ];
+    let x = margin, y = H - 50;
+    ctx.font = '12px ui-monospace, monospace';
+    items.forEach(([c,t])=>{
+      ctx.beginPath(); ctx.arc(x,y-4,6,0,Math.PI*2); ctx.fillStyle=c; ctx.fill();
+      ctx.fillStyle='rgba(66,84,102,.86)'; ctx.fillText(t,x+12,y);
+      x += ctx.measureText(t).width + 42;
+    });
+  }
+
+  function stateForMode(a,mode,t){
+    const x=a.x, y=a.y;
+    const center = Math.hypot(x-14,y-14);
+    const r1 = rand(x*31+y*47+9);
+    const r2 = rand(x*71+y*19+21);
+
+    if(mode==='baseline'){
+      if(r1 < .11) return 2;
+      if(r1 < .23) return 0;
+      return 1;
+    }
+    if(mode==='starters'){
+      if((x===7 && y===8) || (x===20 && y===18) || (x===13 && y===21)) return 2;
+      if(center < 5 && r1 < .22) return 2;
+      if(r1 < .17) return 0;
+      return 1;
+    }
+    if(mode==='threshold'){
+      const thresholdBand = Math.floor(a.threshold*10);
+      if(thresholdBand <= 2) return 2;
+      if(thresholdBand <= 5) return 1;
+      return 0;
+    }
+    if(mode==='broken'){
+      const d1 = Math.hypot(x-8,y-9), d2 = Math.hypot(x-21,y-19);
+      if(d1 < 2.4 || d2 < 2.2) return 2;
+      if((d1 < 4.2 || d2 < 3.8) && r1 < .28) return 1;
+      if(r1 < .25) return 0;
+      return 1;
+    }
+    if(mode==='critical'){
+      const wave = center < (6 + Math.sin(t*.0017)*2.4) || Math.abs((x+y)-28) < 2;
+      if(wave && r1 < .72) return 2;
+      if(r1 < .15) return 0;
+      return 1;
+    }
+    if(mode==='cascade'){
+      const spread = Math.min(19, 4 + (t*.006)%18);
+      if(center < spread || r1 < .18) return 2;
+      if(r1 < .08) return 0;
+      return r2 < .15 ? 1 : 2;
+    }
+    if(mode==='segregation'){
+      if(x < 11 && y < 18) return 2;
+      if(x > 17 && y < 15) return 1;
+      if(y > 18 && x < 15) return 0;
+      if(x > 16 && y > 16) return 3;
+      return r1 < .45 ? 1 : 2;
+    }
+    if(mode==='zones'){
+      if(Math.hypot(x-8,y-10)<7) return 2;
+      if(Math.hypot(x-21,y-9)<6) return 1;
+      if(Math.hypot(x-9,y-22)<6) return 0;
+      if(Math.hypot(x-21,y-22)<5.7) return 3;
+      return r1 < .5 ? 1 : 0;
+    }
+    if(mode==='shadow'){
+      if(Math.hypot(x-20,y-21)<8) return 3;
+      if(Math.hypot(x-8,y-9)<5.5) return 2;
+      if(r1 < .18) return 2;
+      if(r1 < .5) return 1;
+      return 0;
+    }
+    if(mode==='governed'){
+      if(x===14 && y===14) return 4;
+      const dGov = Math.hypot(x-14,y-14);
+      if(dGov < 8.5) return r1 < .08 ? 1 : 2;
+      if(Math.hypot(x-22,y-22)<4 && r1 < .25) return 3;
+      if(r1 < .11) return 0;
+      return r2 < .68 ? 2 : 1;
+    }
+    return a.state;
+  }
+
+  function drawNetworkPulse(t,mode){
+    if(!['critical','cascade','governed'].includes(mode)) return;
+    ctx.save();
+    ctx.strokeStyle = mode==='governed' ? 'rgba(37,99,235,.22)' : 'rgba(66,209,125,.22)';
+    ctx.lineWidth = 2;
+    for(let i=0;i<6;i++){
+      const rad = 55 + ((t*.04 + i*52)%320);
+      ctx.beginPath();
+      ctx.arc(W/2,H/2,rad,0,Math.PI*2);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawClustersLabels(mode){
+    if(mode==='zones' || mode==='segregation'){
+      const labels = [
+        ['SAFE USERS', 8, 5, palette.green], ['CAUTIOUS', 21, 5, palette.yellow], ['NON-USERS', 8, 25, palette.gray], ['SHADOW', 21, 25, palette.red]
+      ];
+      ctx.save();
+      ctx.font = '700 12px ui-monospace, monospace';
+      labels.forEach(([txt,x,y,c])=>{
+        const px = margin+x*cell, py=margin+y*cell;
+        ctx.fillStyle='rgba(255,255,255,.86)';
+        const w=ctx.measureText(txt).width+18;
+        ctx.fillRect(px-8,py-18,w,24);
+        ctx.strokeStyle='rgba(203,213,225,.95)'; ctx.strokeRect(px-8,py-18,w,24);
+        ctx.fillStyle=c; ctx.fillText(txt,px,py);
+      });
+      ctx.restore();
+    }
+    if(mode==='shadow'){
+      ctx.save();
+      ctx.strokeStyle='rgba(220,38,38,.45)'; ctx.lineWidth=3; ctx.setLineDash([8,8]);
+      ctx.beginPath(); ctx.arc(margin+21*cell, margin+22*cell, 8*cell, 0, Math.PI*2); ctx.stroke();
+      ctx.setLineDash([]); ctx.fillStyle='rgba(220,38,38,.90)'; ctx.font='700 14px ui-monospace, monospace'; ctx.fillText('hidden adoption zone', margin+16*cell, margin+13*cell);
+      ctx.restore();
+    }
+    if(mode==='governed'){
+      ctx.save();
+      ctx.strokeStyle='rgba(37,99,235,.42)'; ctx.lineWidth=3;
+      ctx.beginPath(); ctx.arc(margin+14.5*cell, margin+14.5*cell, 8.5*cell, 0, Math.PI*2); ctx.stroke();
+      ctx.fillStyle='rgba(37,99,235,.9)'; ctx.font='700 14px ui-monospace, monospace'; ctx.fillText('governance support radius', margin+8*cell, margin+5*cell);
+      ctx.restore();
+    }
+  }
+
+  function drawChartInset(mode,t){
+    if(!['threshold','broken','critical','cascade'].includes(mode)) return;
+    const x=575,y=118,w=225,h=164;
+    ctx.save();
+    ctx.fillStyle='rgba(255,255,255,.92)'; ctx.strokeStyle='rgba(203,213,225,.96)'; ctx.lineWidth=1;
+    roundRect(x,y,w,h,12,true,true);
+    ctx.fillStyle='rgba(100,116,139,.85)'; ctx.font='11px ui-monospace, monospace';
+    ctx.fillText('cascade condition',x+15,y+24);
+    ctx.strokeStyle='rgba(148,163,184,.9)';
+    ctx.beginPath(); ctx.moveTo(x+28,y+h-32); ctx.lineTo(x+w-20,y+h-32); ctx.moveTo(x+28,y+h-32); ctx.lineTo(x+28,y+42); ctx.stroke();
+    ctx.strokeStyle='rgba(15,118,110,.92)'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(x+30,y+h-42); ctx.bezierCurveTo(x+70,y+h-50,x+80,y+88,x+120,y+72); ctx.bezierCurveTo(x+155,y+58,x+178,y+52,x+w-25,y+49); ctx.stroke();
+    ctx.strokeStyle='rgba(180,83,9,.85)'; ctx.lineWidth=2; ctx.setLineDash([6,6]);
+    ctx.beginPath(); ctx.moveTo(x+30,y+h-32); ctx.lineTo(x+w-25,y+47); ctx.stroke(); ctx.setLineDash([]);
+    let px = mode==='broken'?84:mode==='critical'?124:mode==='cascade'?165:105;
+    ctx.fillStyle = mode==='broken'?palette.yellow:mode==='critical'?palette.orange:palette.green;
+    ctx.beginPath(); ctx.arc(x+px,y+80,6,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(66,84,102,.92)'; ctx.font='10px ui-monospace, monospace';
+    ctx.fillText(mode==='broken'?'breaks':mode==='critical'?'tipping':'continues',x+px+10,y+84);
+    ctx.restore();
+  }
+
+  function roundRect(x, y, width, height, radius, fill, stroke) {
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+    if (fill) ctx.fill();
+    if (stroke) ctx.stroke();
+  }
+
+  function draw(){
+    const now = paused ? pauseAt : performance.now();
+    const t = now - start;
+    const titleMap = {
+      baseline:'baseline workplace', starters:'first adopters', threshold:'threshold rule', broken:'broken cascade', critical:'critical point', cascade:'full cascade', segregation:'segregation pattern', zones:'adoption zones', shadow:'shadow AI risk', governed:'governed adoption'
+    };
+    drawBackground(titleMap[activeMode] || 'AdoptAI simulation');
+    drawNetworkPulse(t,activeMode);
+
+    baseAgents.forEach((a,i)=>{
+      const state = stateForMode(a,activeMode,t);
+      let alpha = 0.88;
+      let scale = 1;
+      let ring = false;
+      if(activeMode==='threshold'){
+        alpha = 0.55 + (1-a.threshold)*.45;
+        scale = 0.78 + (1-a.threshold)*.55;
+      }
+      if(activeMode==='starters' && ((a.x===7&&a.y===8)||(a.x===20&&a.y===18)||(a.x===13&&a.y===21))) ring = true;
+      if(activeMode==='governed' && a.x===14 && a.y===14) { scale=1.25; ring=true; }
+      drawAgent(a.x,a.y,state,alpha,scale,ring);
+    });
+
+    drawClustersLabels(activeMode);
+    drawChartInset(activeMode,t);
+    drawLegend();
+    requestAnimationFrame(draw);
+  }
+
+  function setActive(step){
+    activeStep = step;
+    steps.forEach(s=>s.classList.toggle('active',s===step));
+    activeMode = step.dataset.mode;
+    lvl.textContent = step.dataset.label;
+    sub.textContent = step.dataset.sub;
+    metric.textContent = step.dataset.metric;
+    cap.textContent = step.dataset.cap;
+    const c = step.dataset.color || 'gray';
+    const color = palette[c] || palette.gray;
+    dot.style.background = color;
+    dot.style.boxShadow = `0 0 18px ${color}`;
+    badge.style.borderColor = color + '88';
+  }
+
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting) setActive(entry.target);
+    });
+  },{threshold:.55});
+  steps.forEach(s=>io.observe(s));
+
+  resetBtn.addEventListener('click',()=>{start=performance.now(); if(paused){pauseAt=start;} });
+  pauseBtn.addEventListener('click',()=>{
+    if(paused){
+      const delta = performance.now() - pauseAt;
+      start += delta;
+      paused=false; pauseBtn.textContent='PAUSE';
+    } else {
+      paused=true; pauseAt=performance.now(); pauseBtn.textContent='PLAY';
+    }
+  });
+
+  setActive(steps[0]);
+  draw();
+})();
+</script>
+</body>
+</html>
